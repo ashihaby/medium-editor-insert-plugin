@@ -59,7 +59,6 @@
     add: function ($placeholder) {
       var that = this,
           $selectFile, files;
-
       $selectFile = $('<input type="file">').click();
       $selectFile.change(function () {
         files = this.files;
@@ -100,14 +99,15 @@
 
       $progress.attr('value', 100);
       $progress.html(100);
-
-      $progress.before('<div class="mediumInsert-images"><img src="'+ jqxhr.responseText +'" draggable="true" alt=""></div>');
+      data = this.options.format(jqxhr);
+      $progress.before('<div class="mediumInsert-images"><img data-attachment="'+ data.attachmentId +'" src="'+ data.imageSrc +'" draggable="true" alt=""></div>');
       $img = $progress.siblings('img');
       $progress.remove();
 
       $img.load(function () {
         $img.parent().mouseleave().mouseenter();
       });
+      this.options.uploadCompleted(jqxhr);
     },
 
 
@@ -132,21 +132,22 @@
       };
 
       for (var i = 0; i < files.length; i++) {
-        var file = files[i];
+        var file = files[i], uploadPromise;
 
         if (acceptedTypes[file.type] === true) {
           $placeholder.append('<progress class="progress" min="0" max="100" value="0">0</progress>');
-
-          $.ajax({
+          uploadPromise = $.ajax({
             type: "post",
             url: $.fn.mediumInsert.settings.imagesUploadScript,
             xhr: xhr,
             cache: false,
             contentType: false,
+            context: this, // YAY
             complete: this.uploadCompleted,
             processData: false,
             data: this.options.formatData(file)
           });
+          that.options.onStartUpload(uploadPromise);
         }
       }
     },
@@ -161,7 +162,7 @@
         var $img = $('img', this),
             positionTop,
             positionLeft;
-            
+
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
@@ -169,11 +170,11 @@
         if ($img.length > 0) {
           $(this).append('<a class="mediumInsert-imageRemove"></a>');
 
-          if ($(this).parent().parent().hasClass('small')) {
-            $(this).append('<a class="mediumInsert-imageResizeBigger"></a>');
-          } else {
-            $(this).append('<a class="mediumInsert-imageResizeSmaller"></a>');
-          }
+          // if ($(this).parent().parent().hasClass('small')) {
+          //   $(this).append('<a class="mediumInsert-imageResizeBigger"></a>');
+          // } else {
+          //   $(this).append('<a class="mediumInsert-imageResizeSmaller"></a>');
+          // }
 
           positionTop = $img.position().top + parseInt($img.css('margin-top'), 10);
           positionLeft = $img.position().left + $img.width() -30;
@@ -182,11 +183,11 @@
             'top': positionTop,
             'left': positionLeft
           });
-          $('.mediumInsert-imageResizeBigger, .mediumInsert-imageResizeSmaller', this).css({
-            'right': 'auto',
-            'top': positionTop,
-            'left': positionLeft-31
-          });
+          // $('.mediumInsert-imageResizeBigger, .mediumInsert-imageResizeSmaller', this).css({
+          //   'right': 'auto',
+          //   'top': positionTop,
+          //   'left': positionLeft-31
+          // });
         }
       });
 
@@ -207,14 +208,15 @@
 
         $.fn.mediumInsert.insert.deselect();
       });
-
       this.$el.on('click', '.mediumInsert-imageRemove', function () {
+        $.fn.mediumInsert.images.options.onRemove(this);
         if ($(this).parent().siblings().length === 0) {
           $(this).parent().parent().parent().removeClass('small');
         }
         $(this).parent().remove();
 
         $.fn.mediumInsert.insert.deselect();
+
       });
     },
 
@@ -241,7 +243,7 @@
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
-        
+
         $(this).removeClass('hover');
       });
 
@@ -249,7 +251,7 @@
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
-        
+
         $(this).addClass('hover');
         $(this).attr('contenteditable', true);
       });
@@ -258,7 +260,7 @@
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
-        
+
         $(this).removeClass('hover');
         $(this).attr('contenteditable', false);
       });
@@ -267,7 +269,7 @@
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
-        
+
         dropSortIndex = $(this).parent().index();
         dropSortParent = $(this).parent().parent().parent().attr('id');
       });
@@ -276,7 +278,7 @@
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
-        
+
         if (dropSuccessful === true) {
           if ($(e.originalEvent.target.parentNode).siblings().length === 0) {
             $(e.originalEvent.target.parentNode).parent().parent().removeClass('small');
@@ -292,7 +294,7 @@
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
-        
+
         e.preventDefault();
       });
 
@@ -302,7 +304,7 @@
         if ($.fn.mediumInsert.settings.enabled === false) {
           return;
         }
-        
+
 
         if (dropSortParent !== $(this).parent().parent().parent().attr('id')) {
           dropSort = false;
