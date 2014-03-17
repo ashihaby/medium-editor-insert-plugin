@@ -23,7 +23,7 @@
       this.options = $.extend(this.default,
         $.fn.mediumInsert.settings.imagesPlugin);
 
-      this.setImageEvents();
+      
       this.setDragAndDropEvents();
       this.preparePreviousImages();
     },
@@ -66,8 +66,9 @@
       });
 
       $.fn.mediumInsert.insert.deselect();
-
+      // $placeholder.insertA('<p><br></p>');
       return $selectFile;
+
     },
 
     /**
@@ -100,8 +101,13 @@
       $progress.attr('value', 100);
       $progress.html(100);
       data = this.options.format(jqxhr);
-      $progress.before('<div class="mediumInsert-images"><img data-attachment="'+ data.attachmentId +'" src="'+ data.imageSrc +'" draggable="true" alt=""></div>');
-      $img = $progress.siblings('img');
+      // $progress.before('<div class="mediumInsert-images"><img data-attachment="'+ data.attachmentId +'" src="'+ data.imageSrc +'" draggable="true" alt=""></div>');
+      $img = $progress.siblings('.uploading').find('img');
+      $img.attr('src', data.imageSrc);
+      $img.attr('data-attachment', data.attachmentId);
+      $img.removeAttr('style');
+      $progress.siblings('.uploading').removeClass('uploading');
+      this.setImageEvents();
       $progress.remove();
 
       $img.load(function () {
@@ -135,7 +141,18 @@
         var file = files[i], uploadPromise;
 
         if (acceptedTypes[file.type] === true) {
-          $placeholder.append('<progress class="progress" min="0" max="100" value="0">0</progress>');
+          $placeholder.append('<progress style="display:none" class="progress" min="0" max="100" value="0">0</progress>');
+          // $progress.before('<div class="mediumInsert-images"><img data-attachment="'+ data.attachmentId +'" src="'+ data.imageSrc +'" draggable="true" alt=""></div>');
+          var $progress = $('.progress:first', this.$el);
+          $progress.parent().parent().after('<p><br/></p>')
+          var fileReader = new FileReader();
+          $(fileReader).on('load', fileReaderCallback);
+          fileReader.readAsDataURL(file);
+
+          function fileReaderCallback(e){
+            $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8" data-attachment="" src="'+ e.target.result +'" draggable="true" alt=""></div>');
+          }
+          
           uploadPromise = $.ajax({
             type: "post",
             url: $.fn.mediumInsert.settings.imagesUploadScript,
