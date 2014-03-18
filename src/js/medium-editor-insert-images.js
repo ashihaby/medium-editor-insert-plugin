@@ -23,7 +23,7 @@
       this.options = $.extend(this.default,
         $.fn.mediumInsert.settings.imagesPlugin);
 
-      
+
       this.setDragAndDropEvents();
       this.preparePreviousImages();
     },
@@ -59,7 +59,8 @@
     add: function ($placeholder) {
       var that = this,
           $selectFile, files;
-      $selectFile = $('<input type="file">').click();
+
+      $selectFile = $('<input accept="image/png, image/jpeg" type="file">').click();
       $selectFile.change(function () {
         files = this.files;
         that.uploadFiles($placeholder, files);
@@ -127,8 +128,7 @@
     uploadFiles: function ($placeholder, files) {
       var acceptedTypes = {
         'image/png': true,
-        'image/jpeg': true,
-        'image/gif': true
+        'image/jpeg': true
       },
       that = this,
       xhr = function () {
@@ -152,7 +152,7 @@
           $(fileReader).on('load', fileReaderCallback);
           fileReader.readAsDataURL(file);
 
-          
+
           uploadPromise = $.ajax({
             type: "post",
             url: $.fn.mediumInsert.settings.imagesUploadScript,
