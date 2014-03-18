@@ -145,13 +145,13 @@
           // $progress.before('<div class="mediumInsert-images"><img data-attachment="'+ data.attachmentId +'" src="'+ data.imageSrc +'" draggable="true" alt=""></div>');
           var $progress = $('.progress:first', this.$el);
           $progress.parent().parent().after('<p><br/></p>')
+          function fileReaderCallback(e){
+            $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8" data-attachment="" src="'+ e.target.result +'" draggable="true" alt=""></div>');
+          }
           var fileReader = new FileReader();
           $(fileReader).on('load', fileReaderCallback);
           fileReader.readAsDataURL(file);
 
-          function fileReaderCallback(e){
-            $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8" data-attachment="" src="'+ e.target.result +'" draggable="true" alt=""></div>');
-          }
           
           uploadPromise = $.ajax({
             type: "post",
