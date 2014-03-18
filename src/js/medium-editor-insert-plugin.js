@@ -213,7 +213,7 @@
       var that = this,
           $el = $.fn.mediumInsert.insert.$el,
           insertBlock = '',
-          insertImage = '<a title="Add Image" class="mediumInsert-action action-images-add">Add Image</a>',
+          insertImage = '<a title="Add Image" class="mediumInsert-action action-images-add"><i class="fa fa-lg fa-picture-o"></i></a>',
           insertMap = '<a class="mediumInsert-action action-maps-add">Map</a>';
 
       if($.fn.mediumInsert.settings.images === true && $.fn.mediumInsert.settings.maps === true) {
