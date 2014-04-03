@@ -97,7 +97,8 @@
 
     uploadCompleted: function (jqxhr) {
       var $progress = $('.progress:first', this.$el),
-          $img;
+          $img,
+          $addButton;
 
       $progress.attr('value', 100);
       $progress.html(100);
@@ -115,6 +116,14 @@
         $img.parent().mouseleave().mouseenter();
       });
       this.options.uploadCompleted(jqxhr);
+      $addButton = $img.parents().find('.mediumInsert-placeholder').prev().find('a');
+      $addButton.attr("disabled", "disabled")
+      $addButton.on('click', (function(_this) {
+        return function(e) {
+          e.preventDefault();
+          return false;
+        };
+      })(this));
     },
 
 
