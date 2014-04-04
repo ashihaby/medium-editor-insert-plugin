@@ -116,14 +116,8 @@
         $img.parent().mouseleave().mouseenter();
       });
       this.options.uploadCompleted(jqxhr);
-      $addButton = $img.parents().find('.mediumInsert-placeholder').prev().find('a');
-      $addButton.attr("disabled", "disabled")
-      $addButton.on('click', (function(_this) {
-        return function(e) {
-          e.preventDefault();
-          return false;
-        };
-      })(this));
+      $addButton = $img.parent().parent().prev().find('a');
+      $addButton.hide()
     },
 
 
@@ -236,6 +230,7 @@
       });
       this.$el.on('click', '.mediumInsert-imageRemove', function () {
         $.fn.mediumInsert.images.options.onRemove(this);
+        $(this).parent().parent().prev().find('a').show();
         if ($(this).parent().siblings().length === 0) {
           $(this).parent().parent().parent().removeClass('small');
         }
