@@ -131,7 +131,8 @@
     uploadFiles: function ($placeholder, files) {
       var acceptedTypes = {
         'image/png': true,
-        'image/jpeg': true
+        'image/jpeg': true,
+        'image/gif': false
       },
       that = this,
       xhr = function () {
@@ -163,11 +164,14 @@
             cache: false,
             contentType: false,
             context: this, // YAY
-            complete: this.uploadCompleted,
+            success: this.uploadCompleted,
             processData: false,
             data: this.options.formatData(file)
           });
           that.options.onStartUpload(uploadPromise);
+        }
+        else {
+          that.options.onStartUpload($.Deferred().reject({error: 'unsupportedFormat'}));         
         }
       }
     },
