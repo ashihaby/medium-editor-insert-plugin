@@ -97,7 +97,8 @@
 
     uploadCompleted: function (jqxhr) {
       var $progress = $('.progress:first', this.$el),
-          $img;
+          $img,
+          $addButton;
 
       $progress.attr('value', 100);
       $progress.html(100);
@@ -115,6 +116,8 @@
         $img.parent().mouseleave().mouseenter();
       });
       this.options.uploadCompleted(jqxhr);
+      $addButton = $img.parent().parent().prev().find('a');
+      $addButton.hide()
     },
 
 
@@ -128,7 +131,8 @@
     uploadFiles: function ($placeholder, files) {
       var acceptedTypes = {
         'image/png': true,
-        'image/jpeg': true
+        'image/jpeg': true,
+        'image/gif': false
       },
       that = this,
       xhr = function () {
@@ -160,11 +164,14 @@
             cache: false,
             contentType: false,
             context: this, // YAY
-            complete: this.uploadCompleted,
+            success: this.uploadCompleted,
             processData: false,
             data: this.options.formatData(file)
           });
           that.options.onStartUpload(uploadPromise);
+        }
+        else {
+          that.options.onStartUpload($.Deferred().reject({error: 'unsupportedFormat'}));         
         }
       }
     },
@@ -227,6 +234,7 @@
       });
       this.$el.on('click', '.mediumInsert-imageRemove', function () {
         $.fn.mediumInsert.images.options.onRemove(this);
+        $(this).parent().parent().prev().find('a').show();
         if ($(this).parent().siblings().length === 0) {
           $(this).parent().parent().parent().removeClass('small');
         }
