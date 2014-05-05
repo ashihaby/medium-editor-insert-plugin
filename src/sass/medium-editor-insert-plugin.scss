@@ -199,10 +199,8 @@ q, blockquote {
   }
 }
 
-// .mediumInsert-withIcon {
-//   font-size: 7px;
-//   i {
-//     display: block;
-//     font-size: 14px;
-//   }
-// }
+// medium insert embed plugin
+.mediumInsert-embed-input-url {
+  position: absolute;
+  left: 0;
+}

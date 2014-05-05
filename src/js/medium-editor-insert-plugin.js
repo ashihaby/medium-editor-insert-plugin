@@ -102,6 +102,8 @@
     }
     this.bindSelect();
 
+   
+
     $.fn.mediumInsert.insert.$el.mediumInsert('enable');
   };
 
@@ -149,7 +151,8 @@
   $.fn.mediumInsert.settings = {
     enabled: true,
     addons: {
-      images: {}
+      images: {},
+      embed: {}
     }
   };
 
@@ -330,6 +333,13 @@
         }
       });
 
+      $(document.body).click(function(e){
+        var $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input');
+        e.preventDefault();
+        $inputBoxes.detach();
+        $.fn.mediumInsert.settings.editor.activate();
+      });
+
 
       // Fix #29
       // Sometimes in Firefox when you hit enter, <br type="_moz"> appears instead of <p><br></p>
@@ -404,13 +414,13 @@
         $('.mediumInsert-buttonsOptions', this).hide();
       });
 
-      $el.on('click', '.mediumInsert-buttons .mediumInsert-action', function () {
+      $el.on('click', '.mediumInsert-buttons .mediumInsert-action', function (e) {
         var addon = $(this).data('addon'),
             action = $(this).data('action'),
             $placeholder = $(this).parents('.mediumInsert-buttons').siblings('.mediumInsert-placeholder');
 
         if (addons[addon] && addons[addon][action]) {
-          addons[addon][action]($placeholder);
+          addons[addon][action](e, $placeholder);
         }
 
         $(this).parents('.mediumInsert').mouseleave();
