@@ -72,12 +72,11 @@
     */
 
     add: function (e, placeholder) {
-      var that = this;
-
+      this.placeholder = placeholder;
       $.fn.mediumInsert.insert.deselect();
       // TODO change this to placeholder image
       // placeholder.append('<div class="mediumInsert-embed">Embed - Coming soon...</div>');
-      that.showInputBox(e, placeholder);
+      this.showInputBox(e, this.placeholder);
     },
     
     showInputBox: function (e, placeholder){
@@ -110,31 +109,36 @@
       }
       return valid;
     },
+    
+    cancel: function () {
+      if (this.promise) {
+        return this.promise.reject([{error: true, error_message: 'abort'}]);
+      }
+    },
 
     getEmbedCode: function(url){
       var that = this,
           $input = $('.mediumInsert-embed-input-url');
       $input.prop('disabled', true).addClass('loading');
       this.options.loadingCallback($input);
-      var promise = $.embedly.extract([url], {
+      this.promise = $.embedly.extract([url], {
         key: this.options.embedlyKey
-      });   
-      promise.done(function(data){
+      });  
+      this.promise.done(function(data){
         if(!data[0].error) {
           $input.detach();
-          that.options.onSuccess(data);
+          that.options.onSuccess(data[0], that.placeholder);
         }
       });
       
-      promise.always(function(data){
+      this.promise.always(function(data){
         $input.removeClass('loading');
         if (data[0].error) {
           $input.prop('disabled', false);
           $input.focus();
-          that.options.onError(data);
-          return;
+          that.options.onError(data[0]);
         }
-        that.options.onComplete(data);
+        that.options.onComplete(data[0]);
       });
     }
 

@@ -337,6 +337,9 @@
         var $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input');
         e.preventDefault();
         $inputBoxes.detach();
+        if (addons.embed) {
+          addons.embed.cancel();
+        }
         $.fn.mediumInsert.settings.editor.activate();
       });
 
