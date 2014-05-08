@@ -60,12 +60,17 @@
   */
 
   MediumEditor.prototype.deactivate = function () {
+    this.deactivateTextEditor();
+    $.fn.mediumInsert.insert.$el.mediumInsert('disable');
+  };
+
+  MediumEditor.prototype.deactivateTextEditor = function () {
     var i;
     if (!this.isActive) {
       return false;
     }
     this.isActive = false;
-
+    // debugger;
     if (this.toolbar !== undefined) {
       this.toolbar.style.display = 'none';
     }
@@ -78,7 +83,6 @@
       this.elements[i].removeAttribute('contentEditable');
     }
 
-    $.fn.mediumInsert.insert.$el.mediumInsert('disable');
   };
 
   /**
