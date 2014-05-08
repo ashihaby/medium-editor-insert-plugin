@@ -106,8 +106,12 @@ q, blockquote {
       left: 40px;
       top: -10px;
       border-radius: 5px;
+      li {
+        float: none;
+      }
       button {
         min-height: auto;
+        width: 100%;
         height: auto;
         padding: 5px;
         border-left: none;
