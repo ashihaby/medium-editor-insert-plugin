@@ -108,10 +108,8 @@
     uploadCompleted: function (jqxhr, $placeholder) {
       var $progress = $('.progress:first', $placeholder),
           $img;
-
       $progress.attr('value', 100);
       $progress.html(100);
-
       $progress.before('<div class="mediumInsert-images"><img src="'+ jqxhr.responseText +'" draggable="true" alt=""></div>');
       $img = $progress.siblings('img');
       $progress.remove();
@@ -170,8 +168,15 @@
         var file = files[i];
 
         if (acceptedTypes[file.type] === true) {
+          if ($placeholder.children().length !== 0) {
+            var $insertBlock = $placeholder.parent(),
+                $nextInsertBlocks;
+            $insertBlock.after('<p><br><p>');
+            that.$el.keyup();
+            $nextInsertBlocks = $insertBlock.nextAll('.mediumInsert').first();
+            $placeholder = $nextInsertBlocks.find('.mediumInsert-placeholder');
+          }
           $placeholder.append('<progress class="progress" min="0" max="100" value="0">0</progress>');
-
           that.uploadFile($placeholder, file, that);
         }
       }
