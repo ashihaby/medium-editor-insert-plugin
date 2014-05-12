@@ -9,7 +9,7 @@
  * Released under the MIT license
  */
 
-(function ($) {
+ (function ($) {
   /*
   * Private storage of registered addons
   */
@@ -22,9 +22,9 @@
 
   MediumEditor.prototype.serialize = function () {
     var i, j,
-        elementid,
-        content = {},
-        $clone, $inserts, $insert, $insertData, html;
+    elementid,
+    content = {},
+    $clone, $inserts, $insert, $insertData, html;
     for (i = 0; i < this.elements.length; i += 1) {
       elementid = (this.elements[i].id !== '') ? this.elements[i].id : 'element-' + i;
 
@@ -60,12 +60,17 @@
   */
 
   MediumEditor.prototype.deactivate = function () {
+    this.deactivateTextEditor();
+    $.fn.mediumInsert.insert.$el.mediumInsert('disable');
+  };
+
+  MediumEditor.prototype.deactivateTextEditor = function () {
     var i;
     if (!this.isActive) {
       return false;
     }
     this.isActive = false;
-
+    // debugger;
     if (this.toolbar !== undefined) {
       this.toolbar.style.display = 'none';
     }
@@ -78,7 +83,6 @@
       this.elements[i].removeAttribute('contentEditable');
     }
 
-    $.fn.mediumInsert.insert.$el.mediumInsert('disable');
   };
 
   /**
@@ -101,6 +105,8 @@
       this.elements[i].setAttribute('contentEditable', true);
     }
     this.bindSelect();
+
+
 
     $.fn.mediumInsert.insert.$el.mediumInsert('enable');
   };
@@ -149,7 +155,8 @@
   $.fn.mediumInsert.settings = {
     enabled: true,
     addons: {
-      images: {}
+      images: {},
+      embed: {}
     }
   };
 
@@ -242,10 +249,10 @@
 
     setPlaceholders: function () {
       var that = this,
-          $el = $.fn.mediumInsert.insert.$el,
-          editor = $.fn.mediumInsert.settings.editor,
-          buttonLabels = (editor && editor.options) ? editor.options.buttonLabels : '',
-          insertBlock = '<ul class="mediumInsert-buttonsOptions medium-editor-toolbar medium-editor-toolbar-active">';
+      $el = $.fn.mediumInsert.insert.$el,
+      editor = $.fn.mediumInsert.settings.editor,
+      buttonLabels = (editor && editor.options) ? editor.options.buttonLabels : '',
+      insertBlock = '<ul class="mediumInsert-buttonsOptions medium-editor-toolbar medium-editor-toolbar-active">';
 
       if (Object.keys($.fn.mediumInsert.settings.addons).length === 0) {
         return false;
@@ -256,11 +263,11 @@
       }
       insertBlock += '</ul>';
       insertBlock = '<div class="mediumInsert" contenteditable="false">'+
-        '<div class="mediumInsert-buttons">'+
-          '<a class="mediumInsert-buttonsShow">+</a>'+
-          insertBlock +
-        '</div>'+
-        '<div class="mediumInsert-placeholder"></div>'+
+      '<div class="mediumInsert-buttons">'+
+      '<a class="mediumInsert-buttonsShow">+</a>'+
+      insertBlock +
+      '</div>'+
+      '<div class="mediumInsert-placeholder"></div>'+
       '</div>';
 
       if ($el.is(':empty')) {
@@ -269,7 +276,7 @@
 
       $el.keyup(function () {
         var $lastChild = $el.children(':last'),
-            i;
+        i;
 
         // Fix #39
         // After deleting all content (ctrl+A and delete) in Firefox, all content is deleted and only <br> appears
@@ -301,7 +308,7 @@
         });
 
       }).keyup();
-    },
+},
 
 
     /**
@@ -311,7 +318,10 @@
 
     setEvents: function () {
       var that = this,
-          $el = $.fn.mediumInsert.insert.$el;
+      $el = $.fn.mediumInsert.insert.$el,
+      $mediumInsert_buttonsShow = $('.mediumInsert-buttons a.mediumInsert-buttonsShow'),
+      $options = $mediumInsert_buttonsShow.siblings('.mediumInsert-buttonsOptions'),
+      $placeholder = $mediumInsert_buttonsShow.parent().siblings('.mediumInsert-placeholder');
 
       $el.on('selectstart', '.mediumInsert', function (e) {
         e.preventDefault();
@@ -320,7 +330,7 @@
 
       $el.on('blur', function () {
         var $clone = $(this).clone(),
-            cloneHtml;
+        cloneHtml;
 
         $clone.find('.mediumInsert').remove();
         cloneHtml = $clone.html().replace(/^\s+|\s+$/g, '');
@@ -330,6 +340,22 @@
         }
       });
 
+      $(document.body).click(function(e){
+        var $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input');
+        e.preventDefault();
+        $inputBoxes.detach();
+        if (addons.embed) {
+          addons.embed.cancel();
+        }
+
+        $.fn.mediumInsert.settings.editor.activate();
+
+        if ($mediumInsert_buttonsShow.hasClass('active')) {
+          $mediumInsert_buttonsShow.removeClass('active');
+          $options.hide();
+        }
+
+      });
 
       // Fix #29
       // Sometimes in Firefox when you hit enter, <br type="_moz"> appears instead of <p><br></p>
@@ -374,9 +400,10 @@
         }
       });
 
-      $el.on('click', '.mediumInsert-buttons a.mediumInsert-buttonsShow', function () {
+      $el.on('click', '.mediumInsert-buttons a.mediumInsert-buttonsShow', function (e) {
+        e.stopPropagation();
         var $options = $(this).siblings('.mediumInsert-buttonsOptions'),
-            $placeholder = $(this).parent().siblings('.mediumInsert-placeholder');
+        $placeholder = $(this).parent().siblings('.mediumInsert-placeholder');
 
         if ($(this).hasClass('active')) {
           $(this).removeClass('active');
@@ -389,7 +416,8 @@
 
           $('a', $options).each(function () {
             var aClass = $(this).attr('class').split('action-')[1],
-                plugin = aClass.split('-')[0];
+            plugin = aClass.split('-')[0];
+            console.log(aClass);
             if ($('.mediumInsert-'+ plugin, $placeholder).length > 0) {
               $('a:not(.action-'+ aClass +')', $options).hide();
             }
@@ -399,24 +427,28 @@
         that.deselect();
       });
 
-      $el.on('mouseleave', '.mediumInsert', function () {
-        $('a.mediumInsert-buttonsShow', this).removeClass('active');
-        $('.mediumInsert-buttonsOptions', this).hide();
+      $el.on('click', '.medium-editor-action-embed', function (event) { 
+        $('.mediumInsert-buttonsOptions').hide();
       });
 
-      $el.on('click', '.mediumInsert-buttons .mediumInsert-action', function () {
-        var addon = $(this).data('addon'),
-            action = $(this).data('action'),
-            $placeholder = $(this).parents('.mediumInsert-buttons').siblings('.mediumInsert-placeholder');
+      // $el.on('mouseleave', '.mediumInsert', function () {
+      //   $('a.mediumInsert-buttonsShow', this).removeClass('active');
+      //   $('.mediumInsert-buttonsOptions', this).hide();
+      // });
 
-        if (addons[addon] && addons[addon][action]) {
-          addons[addon][action]($placeholder);
-        }
+$el.on('click', '.mediumInsert-buttons .mediumInsert-action', function (e) {
+  var addon = $(this).data('addon'),
+  action = $(this).data('action'),
+  $placeholder = $(this).parents('.mediumInsert-buttons').siblings('.mediumInsert-placeholder');
 
-        $(this).parents('.mediumInsert').mouseleave();
-      });
-    }
+  if (addons[addon] && addons[addon][action]) {
+    addons[addon][action](e, $placeholder);
+  }
 
-  };
+  $(this).parents('.mediumInsert').mouseleave();
+});
+}
+
+};
 
 }(jQuery));

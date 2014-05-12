@@ -1,5 +1,13 @@
 @import "clearfix";
 
+@mixin mediumInsert-buttonsShow-active() {
+  -moz-transform: scale(1);
+  -ms-transform: scale(1);
+  -o-transform: scale(1);
+  -webkit-transform: scale(1);
+  transform: scale(1);
+  opacity: 1;
+}
 
 img {
   max-width: 100%;
@@ -70,12 +78,17 @@ q, blockquote {
   line-height: 18px;
   text-align: center;
   text-decoration: none !important;
+
   &:after {
     left: auto;
     right: 100%;
     top: 50%;
     margin-top: -4px;
   }
+}
+
+.mediumInsert-buttonsShow.active {
+  @include mediumInsert-buttonsShow-active();
 }
 
 .mediumInsert {
@@ -106,8 +119,12 @@ q, blockquote {
       left: 40px;
       top: -10px;
       border-radius: 5px;
+      li {
+        float: none;
+      }
       button {
         min-height: auto;
+        width: 100%;
         height: auto;
         padding: 5px;
         border-left: none;
@@ -173,12 +190,7 @@ q, blockquote {
   }
   &:hover {
     .mediumInsert-buttonsShow {
-      -moz-transform: scale(1);
-      -ms-transform: scale(1);
-      -o-transform: scale(1);
-      -webkit-transform: scale(1);
-      transform: scale(1);
-      opacity: 1;
+      @include mediumInsert-buttonsShow-active();
     }
   }
   &.small {
@@ -199,10 +211,8 @@ q, blockquote {
   }
 }
 
-// .mediumInsert-withIcon {
-//   font-size: 7px;
-//   i {
-//     display: block;
-//     font-size: 14px;
-//   }
-// }
+// medium insert embed plugin
+.mediumInsert-embed-input-url {
+  position: absolute;
+  left: 0;
+}
