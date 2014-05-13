@@ -43,9 +43,9 @@
         e.stopPropagation();
         $.fn.mediumInsert.settings.editor.deactivateTextEditor();
       });
-      this.$input.select(function(e){e.stopPropagation();});
+      // this.$input.select(function(e){e.stopPropagation();});
       this.$input.keyup(function(e){
-          e.preventDefault();
+          // e.preventDefault();
           //ENTER key
           if (e.which === 13){
             if (that.isSupported(this.value)){
@@ -78,7 +78,7 @@
       // placeholder.append('<div class="mediumInsert-embed">Embed - Coming soon...</div>');
       this.showInputBox(e, this.placeholder);
     },
-    
+
     showInputBox: function (e, placeholder){
       e.stopPropagation();
       var $previousInput = $('.mediumInsert-embed-input-url');
@@ -87,7 +87,7 @@
       }
       this.$input = $('<input class="mediumInsert-embed-input-url mediumInsert-input">');
       this.setInputboxEvents();
-      
+
       placeholder.prepend(this.$input);
       this.$input.focus();
     },
@@ -109,7 +109,7 @@
       }
       return valid;
     },
-    
+
     cancel: function () {
       if (this.promise) {
         return this.promise.reject([{error: true, error_message: 'abort'}]);
@@ -123,22 +123,23 @@
       this.options.loadingCallback($input);
       this.promise = $.embedly.extract([url], {
         key: this.options.embedlyKey
-      });  
+      });
       this.promise.done(function(data){
         if(!data[0].error) {
           $input.detach();
           if (that.placeholder.children().length !== 0){
             var $insertBlock = that.placeholder.parent(),
                 $nextInsertBlocks;
-            $insertBlock.after('<p><br><p>');
+
+            $insertBlock.prev('p').before('<p><br><p>');
             that.$el.keyup();
-            $nextInsertBlocks = $insertBlock.nextAll('.mediumInsert').first();
+            $nextInsertBlocks = $insertBlock.prevAll('.mediumInsert').first();
             that.placeholder = $nextInsertBlocks.find('.mediumInsert-placeholder');
           }
           that.options.onSuccess(data[0], that.placeholder);
         }
       });
-      
+
       this.promise.always(function(data){
         $input.removeClass('loading');
         if (data[0].error) {
