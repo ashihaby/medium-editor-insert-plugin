@@ -403,7 +403,8 @@
       $el.on('click', '.mediumInsert-buttons a.mediumInsert-buttonsShow', function (e) {
         e.stopPropagation();
         var $options = $(this).siblings('.mediumInsert-buttonsOptions'),
-        $placeholder = $(this).parent().siblings('.mediumInsert-placeholder');
+        $placeholder = $(this).parent().siblings('.mediumInsert-placeholder'),
+        $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input');
 
         if ($(this).hasClass('active')) {
           $(this).removeClass('active');
@@ -423,8 +424,13 @@
             }
           });
         }
-
+        if ($inputBoxes.length > 0) {
+          $inputBoxes.detach();
+          $(this).addClass('active');
+          $options.show();  
+        }
         that.deselect();
+        
       });
 
       $el.on('click', '.medium-editor-action-embed', function (event) { 
