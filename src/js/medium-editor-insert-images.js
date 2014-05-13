@@ -25,7 +25,9 @@
       this.options = $.extend(this.default, options);
 
       this.setImageEvents();
-      this.setDragAndDropEvents();
+      if (this.options.dragAndDrop) {
+        this.setDragAndDropEvents();
+      }
       this.preparePreviousImages();
     },
 
@@ -44,6 +46,7 @@
 
     default: {
       imagesUploadScript: 'upload.php',
+      dragAndDrop: true,
       formatData: function (file) {
         var formData = new FormData();
         formData.append('file', file);
@@ -55,9 +58,10 @@
     * Make existing images interactive
     */
     preparePreviousImages: function () {
+      var that = this;
       this.$el.find('.mediumInsert-images').each(function() {
         var $parent = $(this).parent();
-        $parent.html('<div class="mediumInsert-placeholder" draggable="true">' + $parent.html() + '</div>');
+        $parent.html('<div class="mediumInsert-placeholder" draggable="'+ that.options.dragAndDrop +'">' + $parent.html() + '</div>');
       });
     },
 
@@ -67,7 +71,7 @@
     * @return {element} $selectFile <input type="file"> element
     */
 
-    add: function ($placeholder) {
+    add: function (e, $placeholder) {
       var that = this,
           $selectFile, files;
 
@@ -108,11 +112,9 @@
     uploadCompleted: function (jqxhr, $placeholder) {
       var $progress = $('.progress:first', $placeholder),
           $img;
-
       $progress.attr('value', 100);
       $progress.html(100);
-
-      $progress.before('<div class="mediumInsert-images"><img src="'+ jqxhr.responseText +'" draggable="true" alt=""></div>');
+      $progress.before('<div class="mediumInsert-images"><img src="'+ jqxhr.responseText +'" draggable="'+ this.options.dragAndDrop +'" alt=""></div>');
       $img = $progress.siblings('img');
       $progress.remove();
 
