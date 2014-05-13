@@ -88,7 +88,7 @@
       this.$input = $('<input class="mediumInsert-embed-input-url mediumInsert-input">');
       this.setInputboxEvents();
       
-      placeholder.append(this.$input);
+      placeholder.prepend(this.$input);
       this.$input.focus();
     },
 
@@ -127,6 +127,14 @@
       this.promise.done(function(data){
         if(!data[0].error) {
           $input.detach();
+          if (that.placeholder.children().length !== 0){
+            var $insertBlock = that.placeholder.parent(),
+                $nextInsertBlocks;
+            $insertBlock.after('<p><br><p>');
+            that.$el.keyup();
+            $nextInsertBlocks = $insertBlock.nextAll('.mediumInsert').first();
+            that.placeholder = $nextInsertBlocks.find('.mediumInsert-placeholder');
+          }
           that.options.onSuccess(data[0], that.placeholder);
         }
       });
