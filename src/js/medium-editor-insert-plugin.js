@@ -280,7 +280,8 @@
       $el.keyup(function () {
         var $lastChild = $el.children(':last'),
         i;
-
+        $('.mediumInsert-placeholder').attr('contenteditable', false);
+        
         // Fix #39
         // After deleting all content (ctrl+A and delete) in Firefox, all content is deleted and only <br> appears
         // To force placeholder to appear, set <p><br></p> as content of the $el
@@ -388,6 +389,9 @@
       // For some reason Chrome doesn't "select-all", when the last placeholder is visible.
       // So it's needed to hide it when the user "selects all", and show it again when they presses any other key.
       $el.on('keydown', function (e) {
+        if(e.keyCode === 8) {
+          $('.mediumInsert-placeholder').attr('contenteditable', true);
+        }
         // Fix Select-all using (ctrl + a) in chrome
         if (navigator.userAgent.match(/chrome/i)) {
           $el.children().last().removeClass('hide');

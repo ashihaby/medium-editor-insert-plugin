@@ -52,6 +52,7 @@
           // e.preventDefault();
           //ENTER key
           if (e.which === 13){
+            e.stopPropagation();
             if (that.isSupported(this.value)){
               that.getEmbedCode(this.value);
             }else{
