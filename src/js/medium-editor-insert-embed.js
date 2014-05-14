@@ -43,6 +43,10 @@
         e.stopPropagation();
         $.fn.mediumInsert.settings.editor.deactivateTextEditor();
       });
+      this.$input.focus(function(e){
+        e.stopPropagation();
+        $.fn.mediumInsert.settings.editor.deactivateTextEditor();
+      });
       this.$input.select(function(e){e.stopPropagation();});
       this.$input.keyup(function(e){
           e.preventDefault();

@@ -78,6 +78,7 @@
     document.documentElement.removeEventListener('mouseup', this.checkSelectionWrapper);
 
     for (i = 0; i < this.elements.length; i += 1) {
+      this.elements[i].removeEventListener('paste',this.pasteWrapper);
       this.elements[i].removeEventListener('keyup', this.checkSelectionWrapper);
       this.elements[i].removeEventListener('blur', this.checkSelectionWrapper);
       this.elements[i].removeAttribute('contentEditable');
@@ -103,6 +104,8 @@
     this.isActive = true;
     for (i = 0; i < this.elements.length; i += 1) {
       this.elements[i].setAttribute('contentEditable', true);
+      this.elements[i].addEventListener('paste',this.pasteWrapper);
+      
     }
     this.bindSelect();
 
