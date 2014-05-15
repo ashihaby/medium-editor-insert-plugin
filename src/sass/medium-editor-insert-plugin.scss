@@ -94,6 +94,8 @@ q, blockquote {
 .mediumInsert {
   position: relative;
   margin: -1em 0 -1em -40px;
+  user-select: none;
+  -moz-user-select: none;
   min-height: 18px;
   .mediumInsert-buttons {
     position: absolute;

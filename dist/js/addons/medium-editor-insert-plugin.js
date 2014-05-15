@@ -78,6 +78,7 @@
     document.documentElement.removeEventListener('mouseup', this.checkSelectionWrapper);
 
     for (i = 0; i < this.elements.length; i += 1) {
+      this.elements[i].removeEventListener('paste',this.pasteWrapper);
       this.elements[i].removeEventListener('keyup', this.checkSelectionWrapper);
       this.elements[i].removeEventListener('blur', this.checkSelectionWrapper);
       this.elements[i].removeAttribute('contentEditable');
@@ -103,6 +104,8 @@
     this.isActive = true;
     for (i = 0; i < this.elements.length; i += 1) {
       this.elements[i].setAttribute('contentEditable', true);
+      this.elements[i].addEventListener('paste',this.pasteWrapper);
+      
     }
     this.bindSelect();
 
@@ -277,7 +280,8 @@
       $el.keyup(function () {
         var $lastChild = $el.children(':last'),
         i;
-
+        $('.mediumInsert-placeholder').attr('contenteditable', false);
+        
         // Fix #39
         // After deleting all content (ctrl+A and delete) in Firefox, all content is deleted and only <br> appears
         // To force placeholder to appear, set <p><br></p> as content of the $el
@@ -385,6 +389,9 @@
       // For some reason Chrome doesn't "select-all", when the last placeholder is visible.
       // So it's needed to hide it when the user "selects all", and show it again when they presses any other key.
       $el.on('keydown', function (e) {
+        if(e.keyCode === 8) {
+          $('.mediumInsert-placeholder').attr('contenteditable', true);
+        }
         // Fix Select-all using (ctrl + a) in chrome
         if (navigator.userAgent.match(/chrome/i)) {
           $el.children().last().removeClass('hide');
@@ -404,7 +411,13 @@
         e.stopPropagation();
         var $options = $(this).siblings('.mediumInsert-buttonsOptions'),
         $placeholder = $(this).parent().siblings('.mediumInsert-placeholder'),
-        $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input');
+        $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input'),
+        $activeButtons = $('.mediumInsert-buttons a.mediumInsert-buttonsShow.active');
+
+        if ($activeButtons) {
+          $activeButtons.parent().find('ul').hide();
+          $activeButtons.removeClass('active');
+        }
 
         if ($(this).hasClass('active')) {
           $(this).removeClass('active');
