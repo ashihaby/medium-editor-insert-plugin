@@ -397,7 +397,7 @@
           $el.children().last().removeClass('hide');
           if ( (e.ctrlKey || e.metaKey) && e.which === 65) {
             e.preventDefault();
-            if($el.find('p').text().trim().length === 0) {
+            if($el.find('p').length !== 0 && $el.find('p').text().trim().length === 0) {
               return false;
             }
 
