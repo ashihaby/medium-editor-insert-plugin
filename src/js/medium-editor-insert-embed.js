@@ -98,7 +98,7 @@
       if ($previousInput.length > 0){
         $previousInput.detach();
       }
-      this.$input = $('<input class="mediumInsert-embed-input-url mediumInsert-input">');
+      this.$input = $('<input class="mediumInsert-embed-input-url mediumInsert-input" placeholder="Paste or type a video link">');
       this.setInputboxEvents();
 
       placeholder.prepend(this.$input);
