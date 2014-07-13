@@ -43,6 +43,12 @@
         e.stopPropagation();
         $.fn.mediumInsert.settings.editor.deactivateTextEditor();
       });
+      this.$input.keydown(function(e) {
+        if ( (e.ctrlKey || e.metaKey) && e.which === 65) {
+          e.preventDefault();
+          this.select();
+        }
+      });
       this.$input.focus(function(e){
         e.stopPropagation();
         $.fn.mediumInsert.settings.editor.deactivateTextEditor();
