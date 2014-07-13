@@ -312,9 +312,27 @@
         });
 
       }).keyup();
-},
+    },
+
+    hideMediumInput: function(e) {
+      var $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input'),
+          $mediumInsert_buttonsShow = $('.mediumInsert-buttons a.mediumInsert-buttonsShow'),
+          $options = $mediumInsert_buttonsShow.siblings('.mediumInsert-buttonsOptions');
 
 
+      e.preventDefault();
+      $inputBoxes.detach();
+      if (addons.embed) {
+        addons.embed.cancel();
+      }
+
+      $.fn.mediumInsert.settings.editor.activate();
+
+      if ($mediumInsert_buttonsShow.hasClass('active')) {
+        $mediumInsert_buttonsShow.removeClass('active');
+        $options.hide();
+      }
+    },
     /**
     * Set events on placeholders
     * @return {void}
@@ -344,22 +362,7 @@
         }
       });
 
-      $(document.body).click(function(e){
-        var $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input');
-        e.preventDefault();
-        $inputBoxes.detach();
-        if (addons.embed) {
-          addons.embed.cancel();
-        }
-
-        $.fn.mediumInsert.settings.editor.activate();
-
-        if ($mediumInsert_buttonsShow.hasClass('active')) {
-          $mediumInsert_buttonsShow.removeClass('active');
-          $options.hide();
-        }
-
-      });
+      $(document.body).on ('click', that.hideMediumInput);
 
       // Fix #29
       // Sometimes in Firefox when you hit enter, <br type="_moz"> appears instead of <p><br></p>

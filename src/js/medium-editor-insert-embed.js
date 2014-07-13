@@ -34,7 +34,7 @@
       'onSuccess': $.noop,
       'onError': $.noop,
       'onComplete': $.noop,
-      'embedlyKey': '7cf354c01bdd4a7aa36591d86cf1f369' // TODO: set default null
+      'embedlyKey': null
     },
 
     setInputboxEvents: function(){
@@ -53,9 +53,11 @@
           //ENTER key
           if (e.which === 13){
             e.stopPropagation();
+            $(document.body).off('click', $.fn.mediumInsert.insert.hideMediumInput);
             if (that.isSupported(this.value)){
               that.getEmbedCode(this.value);
             }else{
+              $(document.body).on('click', $.fn.mediumInsert.insert.hideMediumInput);
               that.options.unsupportedURL(this.value);
             }
           }
@@ -146,6 +148,7 @@
       });
 
       this.promise.always(function(data){
+        $(document.body).on('click', $.fn.mediumInsert.insert.hideMediumInput);
         $input.removeClass('loading');
         if (data[0].error) {
           $input.prop('disabled', false);
