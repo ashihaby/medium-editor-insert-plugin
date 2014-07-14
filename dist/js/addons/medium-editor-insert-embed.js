@@ -99,10 +99,11 @@
         $previousInput.detach();
       }
 
-      this.$input = $('<div class="mediumInsert-embed medium-arrow-right"><input class="mediumInsert-embed-input-url mediumInsert-input" placeholder="Paste or type a video link"></div>');
+      this.$mediumInsertEmbed = $('<div class="mediumInsert-embed medium-arrow-right"></div>');
+      this.$input = $('<input class="mediumInsert-embed-input-url mediumInsert-input" placeholder="Paste or type a video link">');
       this.setInputboxEvents();
 
-      placeholder.prepend(this.$input);
+      placeholder.prepend(this.$mediumInsertEmbed.prepend(this.$input));
       this.$input.focus();
     },
 
