@@ -315,7 +315,7 @@
     },
 
     hideMediumInput: function(e) {
-      var $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input'),
+      var $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-embed'),
           $mediumInsert_buttonsShow = $('.mediumInsert-buttons a.mediumInsert-buttonsShow'),
           $options = $mediumInsert_buttonsShow.siblings('.mediumInsert-buttonsOptions');
 
