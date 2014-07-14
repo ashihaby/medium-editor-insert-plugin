@@ -218,4 +218,28 @@ q, blockquote {
   position: absolute;
   left: 0;
   top: -10px;
+  background: rgb(36, 36, 36);
+  color: rgb(153, 153, 153);
+  border-radius: 5px;
+  height: 35px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 6px;
+  width: 316px;
+  border: none;
+  font-size: 14px;
+  font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+.mediumInsert-embed-input-url:focus {
+  outline-color: rgba(0, 0, 0, 0);
+}
+.medium-arrow-right {
+  width: 0;
+  height: 0;
+  border-top: 8px solid rgba(0, 0, 0, 0);
+  border-bottom: 8px solid rgba(0, 0, 0, 0);
+  border-right: 8px solid rgb(36, 36, 36);
+  margin-left: -8px;
 }

@@ -73,7 +73,7 @@
     insertButton: function(buttonLabels){
       var label = 'Embed';
       if (buttonLabels === 'fontawesome') {
-        label = '<i class="fa fa-map-marker"></i>';
+        label = '<i class="fa fa-film"></i>';
       }
       return '<button data-addon="embed" data-action="add" class="medium-editor-action medium-editor-action-embed mediumInsert-action">'+label+'</button>';
     },
@@ -98,7 +98,7 @@
       if ($previousInput.length > 0){
         $previousInput.detach();
       }
-      this.$input = $('<input class="mediumInsert-embed-input-url mediumInsert-input">');
+      this.$input = $('<input class="mediumInsert-embed-input-url mediumInsert-input" placeholder="Paste or type a video link">');
       this.setInputboxEvents();
 
       placeholder.prepend(this.$input);
