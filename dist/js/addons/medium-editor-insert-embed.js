@@ -96,7 +96,7 @@
       e.stopPropagation();
       var $previousInput = $('.mediumInsert-embed-input-url');
       if ($previousInput.length > 0){
-        $previousInput.detach();
+        $previousInput.parent().detach();
       }
 
       this.$mediumInsertEmbed = $('<div class="mediumInsert-embed medium-arrow-right"></div>');
@@ -141,7 +141,7 @@
       });
       this.promise.done(function(data){
         if(!data[0].error) {
-          $input.detach();
+          $input.parent().detach();
           if (that.placeholder.children().length !== 0){
             var $insertBlock = that.placeholder.parent(),
                 $nextInsertBlocks;
