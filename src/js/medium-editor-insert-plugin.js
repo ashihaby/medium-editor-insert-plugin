@@ -414,7 +414,7 @@
         e.stopPropagation();
         var $options = $(this).siblings('.mediumInsert-buttonsOptions'),
         $placeholder = $(this).parent().siblings('.mediumInsert-placeholder'),
-        $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-input'),
+        $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-embed'),
         $activeButtons = $('.mediumInsert-buttons a.mediumInsert-buttonsShow.active');
 
         if ($activeButtons) {
