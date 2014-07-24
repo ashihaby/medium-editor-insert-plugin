@@ -320,7 +320,6 @@
           $options = $mediumInsert_buttonsShow.siblings('.mediumInsert-buttonsOptions');
 
 
-      e.preventDefault();
       $inputBoxes.detach();
       if (addons.embed) {
         addons.embed.cancel();

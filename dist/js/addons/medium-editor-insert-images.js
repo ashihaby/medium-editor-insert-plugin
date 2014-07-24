@@ -10,7 +10,6 @@
  */
 
 (function($) {
-
     $.fn.mediumInsert.registerAddon('images', {
 
         /**
@@ -43,13 +42,17 @@
         /**
          * Images default options
          */
-
         default: {
             imagesUploadScript: 'upload.php',
             uploadErrorCallback: $.noop,
             uploadSuccessCallback: $.noop,
             uploadCompleteCallback: $.noop,
             unsupportedFileTypeCallback: $.noop,
+            acceptedTypes: {
+                'image/png': true,
+                'image/jpeg': true,
+                'image/gif': true
+            },
             dragAndDrop: true,
             formatData: function(file) {
                 var formData = new FormData();
@@ -136,17 +139,12 @@
          */
 
         uploadFiles: function($placeholder, files, that) {
-            var acceptedTypes = {
-                    'image/png': true,
-                    'image/jpeg': true,
-                    'image/gif': true
-                },
+            var acceptedTypes = that.options.acceptedTypes,
                 xhr = function() {
                     var xhr = new XMLHttpRequest();
                     xhr.upload.onprogress = that.updateProgressBar;
                     return xhr;
                 };
-
             function fileReaderCallback(e) {
                 $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8;width:100%" data-attachment="" src="' + e.target.result + '" draggable="true" alt=""></div>');
             }
