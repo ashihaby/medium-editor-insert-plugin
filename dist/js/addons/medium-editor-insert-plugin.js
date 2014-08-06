@@ -19,6 +19,16 @@
   * Extend MediumEditor's serialize function to get rid of unnecesarry Medium Editor Insert Plugin stuff
   * @return {object} content Object containing HTML content of each element
   */
+  
+  checkScrollBar = function () {
+    // http://stackoverflow.com/questions/4614072/how-do-i-find-out-whether-the-browser-window-has-a-scrollbar-visible-in-jquery?answertab=active#tab-top
+    var hContent = $("body").height();
+    var hWindow = $(window).height();
+    if(hContent > hWindow) { 
+      return true;    
+    }
+    return false;
+  };
 
   MediumEditor.prototype.serialize = function () {
     var i, j,
@@ -369,7 +379,8 @@
       // If it happens, force to wrap the <br> into a paragraph
       $el.on('keypress', function (e) {
         if ($('.mediumInsert-buttonsShow.active').length !== 0) {
-          $mediumInsert_buttonsShow.removeClass('active');        
+          $mediumInsert_buttonsShow.removeClass('active');  
+          $options.hide();      
         }
 
         if (that.isFirefox) {
@@ -416,6 +427,11 @@
 
       $el.on('click', '.mediumInsert-buttons a.mediumInsert-buttonsShow', function (e) {
         e.stopPropagation();
+        if ( checkScrollBar() ) {
+          if ($(e.currentTarget).parent().parent().position().top > $(window).height()){
+            window.scroll(0, window.scrollY + 50);
+          }
+        }
         var $options = $(this).siblings('.mediumInsert-buttonsOptions'),
         $placeholder = $(this).parent().siblings('.mediumInsert-placeholder'),
         $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-embed'),
@@ -477,7 +493,8 @@
       $el.on('mousemove', 'p', function (e) {
         $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
       });
-      $el.on('mousedown', 'p', function (e) {
+
+      $el.on('click', 'p', function (e) {
         $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
       });
       $el.on('mousemove', function (e) {
@@ -491,11 +508,16 @@
         innerText = $el.text().replace(/[+]/gi, '').length;
         pCounters = $el.find('p').length;
         if (innerText === 0 && pCounters === 1){
+          that.hideMediumInput();
           $el.find('.mediumInsert').first().find('.mediumInsert-buttonsShow').removeClass('active');
+          $options.hide();
         } 
       });
       $el.on('mouseleave', 'p', function (e) {
+        that.hideMediumInput();
         $(e.currentTarget).next().find('.mediumInsert-buttonsShow').removeClass('active');
+        $options.hide();
+        
       });
     }
 
