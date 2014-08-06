@@ -311,6 +311,7 @@
           i++;
         });
 
+
       }).keyup();
     },
 
@@ -367,6 +368,10 @@
       // Sometimes in Firefox when you hit enter, <br type="_moz"> appears instead of <p><br></p>
       // If it happens, force to wrap the <br> into a paragraph
       $el.on('keypress', function (e) {
+        if ($('.mediumInsert-buttonsShow.active').length !== 0) {
+          $mediumInsert_buttonsShow.removeClass('active');        
+        }
+
         if (that.isFirefox) {
           if (e.keyCode === 13) {
             //wrap content text in p to avoid firefox problems
@@ -457,18 +462,42 @@
       //   $('.mediumInsert-buttonsOptions', this).hide();
       // });
 
-$el.on('click', '.mediumInsert-buttons .mediumInsert-action', function (e) {
-  var addon = $(this).data('addon'),
-  action = $(this).data('action'),
-  $placeholder = $(this).parents('.mediumInsert-buttons').siblings('.mediumInsert-placeholder');
+      $el.on('click', '.mediumInsert-buttons .mediumInsert-action', function (e) {
+        var addon = $(this).data('addon'),
+        action = $(this).data('action'),
+        $placeholder = $(this).parents('.mediumInsert-buttons').siblings('.mediumInsert-placeholder');
 
-  if (addons[addon] && addons[addon][action]) {
-    addons[addon][action](e, $placeholder);
-  }
+        if (addons[addon] && addons[addon][action]) {
+          addons[addon][action](e, $placeholder);
+        }
 
-  $(this).parents('.mediumInsert').mouseleave();
-});
-}
+        $(this).parents('.mediumInsert').mouseleave();
+      });
+
+      $el.on('mousemove', 'p', function (e) {
+        $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
+      });
+      $el.on('mousedown', 'p', function (e) {
+        $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
+      });
+      $el.on('mousemove', function (e) {
+        innerText = $el.text().replace(/[+]/gi, '').length;
+        pCounters = $el.find('p').length;
+        if (innerText === 0 && pCounters === 1){
+          $el.find('.mediumInsert').first().find('.mediumInsert-buttonsShow').addClass('active');
+        } 
+      });
+      $el.on('mouseleave', function (e) {
+        innerText = $el.text().replace(/[+]/gi, '').length;
+        pCounters = $el.find('p').length;
+        if (innerText === 0 && pCounters === 1){
+          $el.find('.mediumInsert').first().find('.mediumInsert-buttonsShow').removeClass('active');
+        } 
+      });
+      $el.on('mouseleave', 'p', function (e) {
+        $(e.currentTarget).next().find('.mediumInsert-buttonsShow').removeClass('active');
+      });
+    }
 
 };
 
