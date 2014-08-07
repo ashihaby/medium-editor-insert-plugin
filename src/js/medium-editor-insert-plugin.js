@@ -22,12 +22,9 @@
   
   checkScrollBar = function () {
     // http://stackoverflow.com/questions/4614072/how-do-i-find-out-whether-the-browser-window-has-a-scrollbar-visible-in-jquery?answertab=active#tab-top
-    var hContent = $("body").height();
-    var hWindow = $(window).height();
-    if(hContent > hWindow) { 
-      return true;    
-    }
-    return false;
+    var heightContent = $(document.body).height();
+    var heightWindow = $(window).height();
+    return (heightContent > heightWindow);
   };
 
   MediumEditor.prototype.serialize = function () {
@@ -393,10 +390,8 @@
       // Sometimes in Firefox when you hit enter, <br type="_moz"> appears instead of <p><br></p>
       // If it happens, force to wrap the <br> into a paragraph
       $el.on('keypress', function (e) {
-        if ($('.mediumInsert-buttonsShow.active').length !== 0) {
-          $mediumInsert_buttonsShow.removeClass('active');  
-          $options.hide();      
-        }
+        $mediumInsert_buttonsShow.removeClass('active');  
+        $options.hide();      
 
         if (that.isFirefox) {
           if (e.keyCode === 13) {
