@@ -343,6 +343,16 @@
         $options.hide();
       }
     },
+    isThereOpenMenus: function ($el) {
+      var noInputs = $el.find('.mediumInsert-input').length === 0,
+          noOptions = $el.find('.mediumInsert-buttonsOptions:visible').length === 0;
+      return (noOptions && noInputs);
+    },
+    elIsEmpty: function ($el) {
+      var innerText = $el.text().replace(/[+]/gi, '').length,
+          pCounters = $el.find('p').length;
+      return (innerText === 0 && pCounters === 1);
+    },
     /**
     * Set events on placeholders
     * @return {void}
@@ -372,7 +382,12 @@
         }
       });
 
-      $(document.body).on ('click', that.hideMediumInput);
+      $(document.body).on ('click', function (e) {
+        var $target = $(e.target);
+        if ($el.find($target).length === 0) {
+          that.hideMediumInput();
+        }
+      });
 
       // Fix #29
       // Sometimes in Firefox when you hit enter, <br type="_moz"> appears instead of <p><br></p>
@@ -489,35 +504,51 @@
 
         $(this).parents('.mediumInsert').mouseleave();
       });
-
-      $el.on('mousemove', 'p', function (e) {
-        $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
-      });
-
       $el.on('click', 'p', function (e) {
+        that.hideMediumInput();
         $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
+        $options.hide();
+        $el.find('.mediumInsert-embed').detach();
       });
+      $el.on('click', '.mediumInsert', function (e) {
+        that.hideMediumInput();
+        $(e.currentTarget).find('.mediumInsert-buttonsShow').addClass('active');
+        $options.hide();
+        $el.find('.mediumInsert-embed').detach();
+      });
+      $el.on('mousemove', '.mediumInsert', function (e) {
+        if (that.isThereOpenMenus($el)) {  
+          that.hideMediumInput();
+          $(e.currentTarget).find('.mediumInsert-buttonsShow').addClass('active');
+        }
+      });
+      $el.on('mouseleave', '.mediumInsert', function (e) {
+        if (that.isThereOpenMenus($el)) {  
+          that.hideMediumInput();
+          $(e.currentTarget).find('.mediumInsert-buttonsShow').removeClass('active');
+        }
+      });
+      $el.on('mousemove', 'p', function (e) {
+        if (that.isThereOpenMenus($el)) {
+          $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
+        }
+      });
+      $el.on('mouseleave', 'p', function (e) {
+        if (that.isThereOpenMenus($el)) {
+          $(e.currentTarget).next().find('.mediumInsert-buttonsShow').removeClass('active');
+        }
+      });
+
       $el.on('mousemove', function (e) {
-        innerText = $el.text().replace(/[+]/gi, '').length;
-        pCounters = $el.find('p').length;
-        if (innerText === 0 && pCounters === 1){
+        if (that.elIsEmpty($el)){
           $el.find('.mediumInsert').first().find('.mediumInsert-buttonsShow').addClass('active');
         } 
       });
       $el.on('mouseleave', function (e) {
-        innerText = $el.text().replace(/[+]/gi, '').length;
-        pCounters = $el.find('p').length;
-        if (innerText === 0 && pCounters === 1){
+        if (that.elIsEmpty($el)){
           that.hideMediumInput();
           $el.find('.mediumInsert').first().find('.mediumInsert-buttonsShow').removeClass('active');
-          $options.hide();
         } 
-      });
-      $el.on('mouseleave', 'p', function (e) {
-        that.hideMediumInput();
-        $(e.currentTarget).next().find('.mediumInsert-buttonsShow').removeClass('active');
-        $options.hide();
-        
       });
     }
 
