@@ -191,11 +191,7 @@ q, blockquote {
       background: #f0f0f0;
     }
   }
-  &:hover {
-    .mediumInsert-buttonsShow {
-      @include mediumInsert-buttonsShow-active();
-    }
-  }
+  
   &.small {
     .mediumInsert-placeholder {
       width: 33.33%;

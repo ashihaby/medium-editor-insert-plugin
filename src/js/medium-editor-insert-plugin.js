@@ -19,6 +19,13 @@
   * Extend MediumEditor's serialize function to get rid of unnecesarry Medium Editor Insert Plugin stuff
   * @return {object} content Object containing HTML content of each element
   */
+  
+  checkScrollBar = function () {
+    // http://stackoverflow.com/questions/4614072/how-do-i-find-out-whether-the-browser-window-has-a-scrollbar-visible-in-jquery?answertab=active#tab-top
+    var heightContent = $(document.body).height();
+    var heightWindow = $(window).height();
+    return (heightContent > heightWindow);
+  };
 
   MediumEditor.prototype.serialize = function () {
     var i, j,
@@ -311,6 +318,7 @@
           i++;
         });
 
+
       }).keyup();
     },
 
@@ -331,6 +339,16 @@
         $mediumInsert_buttonsShow.removeClass('active');
         $options.hide();
       }
+    },
+    isThereOpenMenus: function ($el) {
+      var noInputs = $el.find('.mediumInsert-input').length === 0,
+          noOptions = $el.find('.mediumInsert-buttonsOptions:visible').length === 0;
+      return (noOptions && noInputs);
+    },
+    elIsEmpty: function ($el) {
+      var innerText = $el.text().replace(/[+]/gi, '').length,
+          pCounters = $el.find('p').length;
+      return (innerText === 0 && pCounters === 1);
     },
     /**
     * Set events on placeholders
@@ -361,12 +379,20 @@
         }
       });
 
-      $(document.body).on ('click', that.hideMediumInput);
+      $(document.body).on ('click', function (e) {
+        var $target = $(e.target);
+        if ($el.find($target).length === 0) {
+          that.hideMediumInput();
+        }
+      });
 
       // Fix #29
       // Sometimes in Firefox when you hit enter, <br type="_moz"> appears instead of <p><br></p>
       // If it happens, force to wrap the <br> into a paragraph
       $el.on('keypress', function (e) {
+        $mediumInsert_buttonsShow.removeClass('active');  
+        $options.hide();      
+
         if (that.isFirefox) {
           if (e.keyCode === 13) {
             //wrap content text in p to avoid firefox problems
@@ -411,6 +437,11 @@
 
       $el.on('click', '.mediumInsert-buttons a.mediumInsert-buttonsShow', function (e) {
         e.stopPropagation();
+        if ( checkScrollBar() ) {
+          if ($(e.currentTarget).parent().parent().position().top > $(window).height()){
+            window.scroll(0, window.scrollY + 50);
+          }
+        }
         var $options = $(this).siblings('.mediumInsert-buttonsOptions'),
         $placeholder = $(this).parent().siblings('.mediumInsert-placeholder'),
         $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-embed'),
@@ -457,18 +488,64 @@
       //   $('.mediumInsert-buttonsOptions', this).hide();
       // });
 
-$el.on('click', '.mediumInsert-buttons .mediumInsert-action', function (e) {
-  var addon = $(this).data('addon'),
-  action = $(this).data('action'),
-  $placeholder = $(this).parents('.mediumInsert-buttons').siblings('.mediumInsert-placeholder');
+      $el.on('click', '.mediumInsert-buttons .mediumInsert-action', function (e) {
+        var addon = $(this).data('addon'),
+        action = $(this).data('action'),
+        $placeholder = $(this).parents('.mediumInsert-buttons').siblings('.mediumInsert-placeholder');
 
-  if (addons[addon] && addons[addon][action]) {
-    addons[addon][action](e, $placeholder);
-  }
+        if (addons[addon] && addons[addon][action]) {
+          addons[addon][action](e, $placeholder);
+        }
 
-  $(this).parents('.mediumInsert').mouseleave();
-});
-}
+        $(this).parents('.mediumInsert').mouseleave();
+      });
+      $el.on('click', 'p', function (e) {
+        that.hideMediumInput();
+        $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
+        $options.hide();
+        $el.find('.mediumInsert-embed').detach();
+      });
+      $el.on('click', '.mediumInsert', function (e) {
+        that.hideMediumInput();
+        $(e.currentTarget).find('.mediumInsert-buttonsShow').addClass('active');
+        $options.hide();
+        $el.find('.mediumInsert-embed').detach();
+      });
+      $el.on('mousemove', '.mediumInsert', function (e) {
+        if (that.isThereOpenMenus($el)) {  
+          that.hideMediumInput();
+          $(e.currentTarget).find('.mediumInsert-buttonsShow').addClass('active');
+        }
+      });
+      $el.on('mouseleave', '.mediumInsert', function (e) {
+        if (that.isThereOpenMenus($el)) {  
+          that.hideMediumInput();
+          $(e.currentTarget).find('.mediumInsert-buttonsShow').removeClass('active');
+        }
+      });
+      $el.on('mousemove', 'p', function (e) {
+        if (that.isThereOpenMenus($el)) {
+          $(e.currentTarget).next().find('.mediumInsert-buttonsShow').addClass('active');
+        }
+      });
+      $el.on('mouseleave', 'p', function (e) {
+        if (that.isThereOpenMenus($el)) {
+          $(e.currentTarget).next().find('.mediumInsert-buttonsShow').removeClass('active');
+        }
+      });
+
+      $el.on('mousemove', function (e) {
+        if (that.elIsEmpty($el)){
+          $el.find('.mediumInsert').first().find('.mediumInsert-buttonsShow').addClass('active');
+        } 
+      });
+      $el.on('mouseleave', function (e) {
+        if (that.elIsEmpty($el)){
+          that.hideMediumInput();
+          $el.find('.mediumInsert').first().find('.mediumInsert-buttonsShow').removeClass('active');
+        } 
+      });
+    }
 
 };
 
