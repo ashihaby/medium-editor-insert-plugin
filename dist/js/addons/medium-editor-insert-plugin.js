@@ -24,7 +24,7 @@
     // http://stackoverflow.com/questions/4614072/how-do-i-find-out-whether-the-browser-window-has-a-scrollbar-visible-in-jquery?answertab=active#tab-top
     var heightContent = $(document.body).height();
     var heightWindow = $(window).height();
-    return (heightContent > heightWindow);
+    return (heightContent >= heightWindow);
   };
 
   MediumEditor.prototype.serialize = function () {
@@ -128,7 +128,6 @@
   */
 
   $.fn.mediumInsert = function (options) {
-
     if (typeof options === 'string' && $.fn.mediumInsert.insert[options]) {
       $.fn.mediumInsert.insert[options]();
     } else {
@@ -327,7 +326,6 @@
           $mediumInsert_buttonsShow = $('.mediumInsert-buttons a.mediumInsert-buttonsShow'),
           $options = $mediumInsert_buttonsShow.siblings('.mediumInsert-buttonsOptions');
 
-
       $inputBoxes.detach();
       if (addons.embed) {
         addons.embed.cancel();
@@ -360,7 +358,8 @@
       $el = $.fn.mediumInsert.insert.$el,
       $mediumInsert_buttonsShow = $('.mediumInsert-buttons a.mediumInsert-buttonsShow'),
       $options = $mediumInsert_buttonsShow.siblings('.mediumInsert-buttonsOptions'),
-      $placeholder = $mediumInsert_buttonsShow.parent().siblings('.mediumInsert-placeholder');
+      $placeholder = $mediumInsert_buttonsShow.parent().siblings('.mediumInsert-placeholder'),
+      $ediotrContainer = $.fn.mediumInsert.settings.ediotrContainer;
 
       $el.on('selectstart', '.mediumInsert', function (e) {
         e.preventDefault();
@@ -437,11 +436,7 @@
 
       $el.on('click', '.mediumInsert-buttons a.mediumInsert-buttonsShow', function (e) {
         e.stopPropagation();
-        if ( checkScrollBar() ) {
-          if ($(e.currentTarget).parent().parent().position().top > $(window).height()){
-            window.scroll(0, window.scrollY + 50);
-          }
-        }
+        
         var $options = $(this).siblings('.mediumInsert-buttonsOptions'),
         $placeholder = $(this).parent().siblings('.mediumInsert-placeholder'),
         $inputBoxes = $.fn.mediumInsert.insert.$el.find('.mediumInsert-embed'),
@@ -469,6 +464,12 @@
               $('a:not(.action-'+ aClass +')', $options).hide();
             }
           });
+          if ( checkScrollBar() ) {
+            if ($(e.currentTarget).parent().parent().position().top + 50 >= $(window).height()){
+              window.scroll(0, window.scrollY + 50);
+              $ediotrContainer.scrollTop(100);
+            }
+          }
         }
         if ($inputBoxes.length > 0) {
           $inputBoxes.detach();
@@ -476,6 +477,7 @@
           $options.show();  
         }
         that.deselect();
+        
         
       });
 
