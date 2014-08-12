@@ -146,7 +146,7 @@
                     return xhr;
                 };
             function fileReaderCallback(e) {
-                $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8;width:100%" data-attachment="" src="' + e.target.result + '" draggable="true" alt=""></div>');
+                $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8;" data-attachment="" src="' + e.target.result + '" draggable="true" alt=""></div>');
             }
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
@@ -224,8 +224,8 @@
                     positionLeft = $img.position().left + $img.width() - 30;
                     $('.mediumInsert-imageRemove', this).css({
                         'right': 'auto',
-                        'top': positionTop,
-                        'left': positionLeft
+                        'top': positionTop - 20,
+                        'left': positionLeft + 20
                     });
                     // $('.mediumInsert-imageResizeBigger, .mediumInsert-imageResizeSmaller', this).css({
                     //   'right': 'auto',
