@@ -8,8 +8,17 @@
  * Copyright (c) 2013 Pavel Linkesch (http://linkesch.sk)
  * Released under the MIT license
  */
+(function (factory, $) {
+    'use strict';
+    if (typeof define === 'function' && define.amd) {
+        // Register as an anonymous AMD module:
+        define(['load-image', 'load-image-orientation', 'load-image-meta', 'load-image-exif'], factory);
+    } else {
+        // Browser globals:
+        factory(window.loadImage);
+    }
+}(function (loadImage) {
 
-(function($) {
     $.fn.mediumInsert.registerAddon('images', {
 
         /**
@@ -145,8 +154,18 @@
                     xhr.upload.onprogress = that.updateProgressBar;
                     return xhr;
                 };
-            function fileReaderCallback(e) {
-                $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8;" data-attachment="" src="' + e.target.result + '" draggable="true" alt=""></div>');
+            function ImageLoaderCallback(img) {
+                var imgSrc = img.src || img.toDataURL('image/jpeg', 0.9);
+                $progress.before('<div class="uploading mediumInsert-images"><img style="opacity: 0.8;" data-attachment="" src="' + imgSrc + '" draggable="true" alt=""></div>');
+            }
+
+            function loadImageOrientation(file, callback, options) {
+                return loadImage.parseMetaData(file, function(data) {
+                    if (data.exif) {
+                      options.orientation = data.exif.get("Orientation");
+                    }
+                    return loadImage(file, callback, options);
+                });
             }
             for (var i = 0; i < files.length; i++) {
                 var file = files[i];
@@ -156,9 +175,11 @@
                     var $progress = $('.progress:first', this.$el);
                     $progress.parent().parent().after('<p><br/></p>');
 
-                    var fileReader = new FileReader();
-                    $(fileReader).on('load', fileReaderCallback);
-                    fileReader.readAsDataURL(file);
+                    loadImageOrientation(file, (function(img) {
+                        return ImageLoaderCallback(img);
+                    }), {
+                        orientation: true
+                    });
 
                     uploadPromise = $.ajax({
                         type: 'post',
@@ -401,4 +422,4 @@
             });
         }
     });
-}(jQuery));
+}, jQuery));
